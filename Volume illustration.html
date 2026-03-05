@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧊 Khám Phá Thể Tích Hình Khối</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --card-bg: rgba(255, 255, 255, 0.07);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --accent-blue: #60a5fa;
+            --accent-purple: #a78bfa;
+            --accent-green: #34d399;
+            --accent-yellow: #fbbf24;
+            --accent-pink: #f472b6;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            padding: 28px 20px 12px;
+        }
+
+        .header h1 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .header .concept {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 18px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(244, 114, 182, 0.15));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .concept .f-yellow {
+            color: var(--accent-yellow);
+        }
+
+        .concept .f-pink {
+            color: var(--accent-pink);
+        }
+
+        /* ── Shape Tabs ── */
+        .shape-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            flex-wrap: wrap;
+        }
+
+        .shape-tab {
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 2px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .shape-tab:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .shape-tab.active {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.25), rgba(167, 139, 250, 0.25));
+            border-color: var(--accent-purple);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(167, 139, 250, 0.3);
+        }
+
+        /* ── Main Layout ── */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+        }
+
+        /* ── Canvas ── */
+        .canvas-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+        }
+
+        #canvas3d {
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: grab;
+        }
+
+        #canvas3d:active {
+            cursor: grabbing;
+        }
+
+        /* ── Controls ── */
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ctrl-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .ctrl-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ── Sliders ── */
+        .slider-group {
+            margin-bottom: 10px;
+        }
+
+        .slider-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .slider-label .val {
+            background: rgba(96, 165, 250, 0.2);
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+        }
+
+        input[type="range"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.12);
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(96, 165, 250, 0.4);
+        }
+
+        /* ── Buttons ── */
+        .btn-animate {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-build {
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(52, 211, 153, 0.3);
+        }
+
+        .btn-build:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(52, 211, 153, 0.4);
+        }
+
+        .btn-reset {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            border: 1px solid var(--card-border);
+            margin-top: 6px;
+        }
+
+        .btn-reset:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: var(--text-primary);
+        }
+
+        .build-progress {
+            margin-top: 8px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .build-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+
+        /* ── Formula ── */
+        .formula-card {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(244, 114, 182, 0.12));
+            border: 1px solid rgba(251, 191, 36, 0.25);
+        }
+
+        .formula-display {
+            text-align: center;
+            padding: 4px 0;
+        }
+
+        .formula-line {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 6px 0;
+            line-height: 1.6;
+        }
+
+        .formula-line .highlight {
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
+
+        .f-blue {
+            color: var(--accent-blue);
+        }
+
+        .f-green {
+            color: var(--accent-green);
+        }
+
+        .f-yellow {
+            color: var(--accent-yellow);
+        }
+
+        .f-pink {
+            color: var(--accent-pink);
+        }
+
+        .f-purple {
+            color: var(--accent-purple);
+        }
+
+        .f-orange {
+            color: var(--accent-orange);
+        }
+
+        .f-red {
+            color: var(--accent-red);
+        }
+
+        .explain-text {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            padding: 2px 0;
+        }
+
+        .explain-text strong {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 800px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .canvas-card {
+                min-height: 380px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🧊 Khám Phá Thể Tích Hình Khối</h1>
+        <p>Mọi hình khối đều được tạo bằng cách "kéo" mặt đáy lên theo chiều cao!</p>
+        <div class="concept">
+            <span class="f-purple">V</span> = <span class="f-yellow">S<sub>đáy</sub></span> × <span
+                class="f-pink">h</span>
+            &nbsp;→&nbsp; luôn đúng với <strong>mọi</strong> hình đáy!
+        </div>
+    </div>
+
+    <div class="shape-tabs" id="shape-tabs">
+        <div class="shape-tab active" data-shape="box">📦 Chữ nhật</div>
+        <div class="shape-tab" data-shape="triangle">🔺 Tam giác</div>
+        <div class="shape-tab" data-shape="circle">⭕ Tròn</div>
+        <div class="shape-tab" data-shape="pentagon">⬠ Ngũ giác</div>
+        <div class="shape-tab" data-shape="hexagon">⬡ Lục giác</div>
+        <div class="shape-tab" data-shape="star">⭐ Ngôi sao</div>
+        <div class="shape-tab" data-shape="ellipse">🥚 Elip</div>
+    </div>
+
+    <div class="main-container">
+        <div class="canvas-card"><canvas id="canvas3d"></canvas></div>
+        <div class="controls-panel">
+            <div class="ctrl-card" id="ctrl-dimensions">
+                <h3>📏 Kích thước</h3>
+                <div id="sliders-container"></div>
+            </div>
+            <div class="ctrl-card">
+                <h3>🎬 Dựng hình</h3>
+                <button class="btn-animate btn-build" id="btn-build" onclick="startBuild()">▶️ Bắt đầu dựng
+                    hình</button>
+                <button class="btn-animate btn-reset" onclick="resetBuild()">🔄 Đặt lại</button>
+                <div class="build-progress">
+                    <div class="build-progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+            <div class="ctrl-card formula-card">
+                <h3>📐 Công thức</h3>
+                <div class="formula-display" id="formula-display"></div>
+            </div>
+            <div class="ctrl-card">
+                <h3>💡 Giải thích</h3>
+                <div class="explain-text" id="explain-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script>
+        /* ================================================================
+           STATE
+           ================================================================ */
+        let scene, camera, renderer, controls;
+        let currentShape = 'box';
+        let buildProgress = 0;
+        let isBuilding = false;
+        let buildAnimId = null;
+
+        let baseMesh = null, bodyMesh = null, topMesh = null, edgeLines = null;
+        let extraMeshes = [];   // for rings, lines, etc.
+        let labelSprites = [];
+        let gridHelper = null;
+
+        /* ================================================================
+           SHAPE CONFIGS
+           ================================================================ */
+        const dims = {
+            box: { w: 5, d: 3, h: 4 },
+            triangle: { a: 5, b: 3.5, h: 4 },
+            circle: { r: 2.5, h: 4 },
+            pentagon: { r: 2.5, h: 4 },
+            hexagon: { r: 2.5, h: 4 },
+            star: { r: 3, h: 4 },
+            ellipse: { rx: 3, ry: 2, h: 4 },
+        };
+
+        const sliderConfig = {
+            box: [
+                { key: 'w', label: 'Chiều dài (a)', min: 1, max: 8, step: 0.5 },
+                { key: 'd', label: 'Chiều rộng (b)', min: 1, max: 8, step: 0.5 },
+                { key: 'h', label: 'Chiều cao (h)', min: 1, max: 8, step: 0.5 },
+            ],
+            triangle: [
+                { key: 'a', label: 'Cạnh đáy (a)', min: 1, max: 8, step: 0.5 },
+                { key: 'b', label: 'Chiều cao tam giác (b)', min: 1, max: 8, step: 0.5 },
+                { key: 'h', label: 'Chiều cao lăng trụ (h)', min: 1, max: 8, step: 0.5 },
+            ],
+            circle: [
+                { key: 'r', label: 'Bán kính (r)', min: 0.5, max: 4, step: 0.25 },
+                { key: 'h', label: 'Chiều cao (h)', min: 1, max: 8, step: 0.5 },
+            ],
+            pentagon: [
+                { key: 'r', label: 'Bán kính ngoại tiếp (r)', min: 0.5, max: 4, step: 0.25 },
+                { key: 'h', label: 'Chiều cao (h)', min: 1, max: 8, step: 0.5 },
+            ],
+            hexagon: [
+                { key: 'r', label: 'Bán kính ngoại tiếp (r)', min: 0.5, max: 4, step: 0.25 },
+                { key: 'h', label: 'Chiều cao (h)', min: 1, max: 8, step: 0.5 },
+            ],
+            star: [
+                { key: 'r', label: 'Bán kính ngoài (r)', min: 1, max: 5, step: 0.25 },
+                { key: 'h', label: 'Chiều cao (h)', min: 1, max: 8, step: 0.5 },
+            ],
+            ellipse: [
+                { key: 'rx', label: 'Bán trục lớn (a)', min: 1, max: 5, step: 0.25 },
+                { key: 'ry', label: 'Bán trục nhỏ (b)', min: 0.5, max: 4, step: 0.25 },
+                { key: 'h', label: 'Chiều cao (h)', min: 1, max: 8, step: 0.5 },
+            ],
+        };
+
+        const shapeNames = {
+            box: 'Hộp chữ nhật',
+            triangle: 'Lăng trụ tam giác',
+            circle: 'Hình trụ tròn',
+            pentagon: 'Lăng trụ ngũ giác đều',
+            hexagon: 'Lăng trụ lục giác đều',
+            star: 'Lăng trụ ngôi sao',
+            ellipse: 'Hình trụ elip',
+        };
+
+        /* ================================================================
+           THREE.JS SETUP
+           ================================================================ */
+        function initThree() {
+            const canvas = document.getElementById('canvas3d');
+            const parent = canvas.parentElement;
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0x000000, 0);
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, parent.clientWidth / parent.clientHeight, 0.1, 100);
+            camera.position.set(8, 6, 10);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.08;
+            controls.minDistance = 5;
+            controls.maxDistance = 30;
+            controls.target.set(0, 2, 0);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+            const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+            dir.position.set(8, 12, 6);
+            scene.add(dir);
+            scene.add(new THREE.PointLight(0x60a5fa, 0.4, 30).translateX(-5).translateY(8));
+
+            gridHelper = new THREE.GridHelper(14, 14, 0x333366, 0x222244);
+            gridHelper.position.y = -0.01;
+            scene.add(gridHelper);
+
+            resize();
+            window.addEventListener('resize', resize);
+            (function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+        }
+
+        function resize() {
+            const p = renderer.domElement.parentElement;
+            renderer.setSize(p.clientWidth, p.clientHeight);
+            camera.aspect = p.clientWidth / p.clientHeight;
+            camera.updateProjectionMatrix();
+        }
+
+        /* ================================================================
+           MATERIALS
+           ================================================================ */
+        const matBase = new THREE.MeshPhysicalMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.6, roughness: 0.3, metalness: 0.1, side: THREE.DoubleSide });
+        const matBody = new THREE.MeshPhysicalMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.35, roughness: 0.2, metalness: 0.05, side: THREE.DoubleSide });
+        const matTop = new THREE.MeshPhysicalMaterial({ color: 0x34d399, transparent: true, opacity: 0.5, roughness: 0.3, metalness: 0.1, side: THREE.DoubleSide });
+        const matEdge = new THREE.LineBasicMaterial({ color: 0xfbbf24, linewidth: 2 });
+
+        /* ================================================================
+           SHAPE GENERATORS → return THREE.Shape
+           ================================================================ */
+        function makeRectShape(w, d) {
+            const s = new THREE.Shape();
+            s.moveTo(-w / 2, -d / 2); s.lineTo(w / 2, -d / 2);
+            s.lineTo(w / 2, d / 2); s.lineTo(-w / 2, d / 2);
+            s.closePath();
+            return s;
+        }
+
+        function makeTriangleShape(a, b) {
+            const s = new THREE.Shape();
+            s.moveTo(-a / 2, 0); s.lineTo(a / 2, 0); s.lineTo(0, b);
+            s.closePath();
+            return s;
+        }
+
+        function makeCircleShape(r, segments = 64) {
+            const s = new THREE.Shape();
+            for (let i = 0; i <= segments; i++) {
+                const angle = (i / segments) * Math.PI * 2;
+                const x = r * Math.cos(angle), y = r * Math.sin(angle);
+                if (i === 0) s.moveTo(x, y); else s.lineTo(x, y);
+            }
+            s.closePath();
+            return s;
+        }
+
+        function makeRegularPolygonShape(r, sides) {
+            const s = new THREE.Shape();
+            for (let i = 0; i <= sides; i++) {
+                const angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
+                const x = r * Math.cos(angle), y = r * Math.sin(angle);
+                if (i === 0) s.moveTo(x, y); else s.lineTo(x, y);
+            }
+            s.closePath();
+            return s;
+        }
+
+        function makeStarShape(outerR, points = 5) {
+            const innerR = outerR * 0.45;
+            const s = new THREE.Shape();
+            for (let i = 0; i <= points * 2; i++) {
+                const angle = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2;
+                const r = (i % 2 === 0) ? outerR : innerR;
+                const x = r * Math.cos(angle), y = r * Math.sin(angle);
+                if (i === 0) s.moveTo(x, y); else s.lineTo(x, y);
+            }
+            s.closePath();
+            return s;
+        }
+
+        function makeEllipseShape(rx, ry, segments = 64) {
+            const s = new THREE.Shape();
+            for (let i = 0; i <= segments; i++) {
+                const angle = (i / segments) * Math.PI * 2;
+                const x = rx * Math.cos(angle), y = ry * Math.sin(angle);
+                if (i === 0) s.moveTo(x, y); else s.lineTo(x, y);
+            }
+            s.closePath();
+            return s;
+        }
+
+        function getBaseShape() {
+            const d = dims[currentShape];
+            switch (currentShape) {
+                case 'box': return makeRectShape(d.w, d.d);
+                case 'triangle': return makeTriangleShape(d.a, d.b);
+                case 'circle': return makeCircleShape(d.r);
+                case 'pentagon': return makeRegularPolygonShape(d.r, 5);
+                case 'hexagon': return makeRegularPolygonShape(d.r, 6);
+                case 'star': return makeStarShape(d.r);
+                case 'ellipse': return makeEllipseShape(d.rx, d.ry);
+            }
+        }
+
+        /* ================================================================
+           BASE AREA CALCULATION
+           ================================================================ */
+        function getBaseArea() {
+            const d = dims[currentShape];
+            switch (currentShape) {
+                case 'box': return d.w * d.d;
+                case 'triangle': return 0.5 * d.a * d.b;
+                case 'circle': return Math.PI * d.r * d.r;
+                case 'pentagon': return 0.5 * 5 * d.r * d.r * Math.sin(2 * Math.PI / 5);
+                case 'hexagon': return 0.5 * 6 * d.r * d.r * Math.sin(2 * Math.PI / 6);
+                case 'star': {
+                    const inner = d.r * 0.45;
+                    return 0.5 * 10 * d.r * inner * Math.sin(Math.PI / 5);
+                }
+                case 'ellipse': return Math.PI * d.rx * d.ry;
+            }
+        }
+
+        /* ================================================================
+           LABEL SYSTEM
+           ================================================================ */
+        function makeLabel(text, color = '#ffffff', fontSize = 40) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 256; canvas.height = 72;
+            ctx.fillStyle = 'rgba(0,0,0,0.55)';
+            ctx.beginPath();
+            ctx.roundRect(6, 6, canvas.width - 12, canvas.height - 12, 12);
+            ctx.fill();
+            ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillStyle = color;
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            const tex = new THREE.CanvasTexture(canvas); tex.needsUpdate = true;
+            const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(mat);
+            sprite.scale.set(2.2, 0.65, 1);
+            return sprite;
+        }
+
+        // Vertex dot: small sphere + letter label
+        function makeVertexDot(letter, x, y, z, color = '#fbbf24') {
+            // Small glowing sphere
+            const geo = new THREE.SphereGeometry(0.1, 16, 16);
+            const mat = new THREE.MeshBasicMaterial({ color: new THREE.Color(color) });
+            const sphere = new THREE.Mesh(geo, mat);
+            sphere.position.set(x, y, z);
+            addObj(sphere);
+
+            // Letter label sprite
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 96; canvas.height = 96;
+
+            // Circle background
+            ctx.beginPath();
+            ctx.arc(48, 48, 40, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fill();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Letter
+            ctx.font = 'bold 44px Nunito, sans-serif';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillStyle = color;
+            ctx.fillText(letter, 48, 48);
+
+            const tex = new THREE.CanvasTexture(canvas); tex.needsUpdate = true;
+            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(0.7, 0.7, 1);
+            sprite.position.set(x, y + 0.45, z);
+            addObj(sprite);
+        }
+
+        function clearLabels() { labelSprites.forEach(s => scene.remove(s)); labelSprites = []; }
+
+        function addObj(obj) { scene.add(obj); labelSprites.push(obj); }
+
+        function makeArrowLine(from, to, color) {
+            const geo = new THREE.BufferGeometry().setFromPoints([from, to]);
+            return new THREE.Line(geo, new THREE.LineBasicMaterial({ color }));
+        }
+
+        /* ================================================================
+           VERTEX POSITIONS
+           ================================================================ */
+        function getVertexPositions2D() {
+            const d = dims[currentShape];
+            // Returns array of {x, z} in the 3D world (y=0 plane)
+            // IMPORTANT: rotation.x = -PI/2 maps shape Y → world -Z
+            // So shape point (sx, sy) → world (sx, 0, -sy)
+            switch (currentShape) {
+                case 'box': return [
+                    { x: -d.w / 2, z: d.d / 2 },  // A: shape(-w/2, -d/2) → z = +d/2
+                    { x: d.w / 2, z: d.d / 2 },  // B: shape( w/2, -d/2) → z = +d/2
+                    { x: d.w / 2, z: -d.d / 2 },  // C: shape( w/2,  d/2) → z = -d/2
+                    { x: -d.w / 2, z: -d.d / 2 },  // D: shape(-w/2,  d/2) → z = -d/2
+                ];
+                case 'triangle': return [
+                    { x: -d.a / 2, z: 0 },        // A: shape(-a/2, 0) → z = 0
+                    { x: d.a / 2, z: 0 },        // B: shape( a/2, 0) → z = 0
+                    { x: 0, z: -d.b },      // C: shape(0, b) → z = -b
+                ];
+                case 'pentagon': {
+                    const pts = [];
+                    for (let i = 0; i < 5; i++) {
+                        const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+                        pts.push({ x: d.r * Math.cos(angle), z: -d.r * Math.sin(angle) });
+                    }
+                    return pts;
+                }
+                case 'hexagon': {
+                    const pts = [];
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+                        pts.push({ x: d.r * Math.cos(angle), z: -d.r * Math.sin(angle) });
+                    }
+                    return pts;
+                }
+                default: return null; // circle, ellipse, star → no vertex labels
+            }
+        }
+
+        const vertexLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+        function addVertexLabels(progress) {
+            const pts = getVertexPositions2D();
+            const d = dims[currentShape];
+            const h = d.h * progress;
+
+            if (pts) {
+                // Bottom vertices (always visible)
+                pts.forEach((p, i) => {
+                    makeVertexDot(vertexLetters[i], p.x, 0, p.z, '#fbbf24');
+                });
+                // Top vertices (only when building)
+                if (h > 0.15) {
+                    pts.forEach((p, i) => {
+                        makeVertexDot(vertexLetters[i] + "'", p.x, h, p.z, '#34d399');
+                    });
+                }
+            }
+
+            // Circle / ellipse: add center point O
+            if (currentShape === 'circle' || currentShape === 'ellipse') {
+                makeVertexDot('O', 0, 0, 0, '#fbbf24');
+                if (h > 0.15) {
+                    makeVertexDot("O'", 0, h, 0, '#34d399');
+                }
+            }
+        }
+
+        /* ================================================================
+           ADD ALL LABELS
+           ================================================================ */
+        function addDimensionLabels(progress) {
+            clearLabels();
+            const d = dims[currentShape];
+            const h = d.h * progress;
+
+            // ── Vertex labels ──
+            addVertexLabels(progress);
+
+            // ── Height label (all shapes) ──
+            if (h > 0.15) {
+                const lh = makeLabel(`h = ${h.toFixed(1)}`, '#f472b6');
+                const offX = currentShape === 'box' ? -d.w / 2 - 1.4 :
+                    currentShape === 'triangle' ? d.a / 2 + 1.4 :
+                        currentShape === 'ellipse' ? -d.rx - 0.8 :
+                            -(d.r || 3) - 1.2;
+                const offZ = currentShape === 'box' ? -d.d / 2 - 0.3 : 0;
+                lh.position.set(offX, h / 2, offZ);
+                addObj(lh);
+                addObj(makeArrowLine(
+                    new THREE.Vector3(offX + 0.4, 0, offZ),
+                    new THREE.Vector3(offX + 0.4, h, offZ),
+                    0xf472b6
+                ));
+            }
+
+            // ── Shape-specific dimension labels ──
+            if (currentShape === 'box') {
+                const la = makeLabel(`a = ${d.w}`, '#60a5fa');
+                la.position.set(0, -0.7, d.d / 2 + 0.8); addObj(la);
+                const lb = makeLabel(`b = ${d.d}`, '#34d399');
+                lb.position.set(d.w / 2 + 0.8, -0.7, 0); addObj(lb);
+            } else if (currentShape === 'triangle') {
+                const la = makeLabel(`a = ${d.a}`, '#60a5fa');
+                la.position.set(0, -0.7, 0.8); addObj(la);
+                const lb = makeLabel(`b = ${d.b}`, '#34d399');
+                lb.position.set(-d.a / 2 - 1.2, -0.7, -d.b / 2); addObj(lb);
+            } else if (currentShape === 'circle') {
+                const lr = makeLabel(`r = ${d.r}`, '#60a5fa');
+                lr.position.set(d.r / 2, -0.5, 0.6); addObj(lr);
+                addObj(makeArrowLine(
+                    new THREE.Vector3(0, 0.02, 0),
+                    new THREE.Vector3(d.r, 0.02, 0), 0x60a5fa
+                ));
+            } else if (currentShape === 'pentagon' || currentShape === 'hexagon') {
+                const lr = makeLabel(`r = ${d.r}`, '#60a5fa');
+                lr.position.set(0, -0.7, d.r + 0.8); addObj(lr);
+                addObj(makeArrowLine(
+                    new THREE.Vector3(0, 0.02, 0),
+                    new THREE.Vector3(d.r, 0.02, 0), 0x60a5fa
+                ));
+            } else if (currentShape === 'star') {
+                const lr = makeLabel(`R = ${d.r}`, '#60a5fa');
+                lr.position.set(d.r / 2, -0.5, d.r + 0.4); addObj(lr);
+                addObj(makeArrowLine(
+                    new THREE.Vector3(0, 0.02, 0),
+                    new THREE.Vector3(d.r * Math.cos(-Math.PI / 2), 0.02, d.r * Math.sin(-Math.PI / 2)), 0x60a5fa
+                ));
+            } else if (currentShape === 'ellipse') {
+                const la = makeLabel(`a = ${d.rx}`, '#60a5fa');
+                la.position.set(d.rx / 2, -0.5, d.ry + 0.4); addObj(la);
+                addObj(makeArrowLine(
+                    new THREE.Vector3(0, 0.02, 0),
+                    new THREE.Vector3(d.rx, 0.02, 0), 0x60a5fa
+                ));
+                const lb = makeLabel(`b = ${d.ry}`, '#34d399');
+                lb.position.set(-d.rx - 0.6, -0.5, d.ry / 2); addObj(lb);
+                addObj(makeArrowLine(
+                    new THREE.Vector3(0, 0.02, 0),
+                    new THREE.Vector3(0, 0.02, d.ry), 0x34d399
+                ));
+            }
+        }
+
+        /* ================================================================
+           BUILD SHAPE (universal extrude)
+           ================================================================ */
+        function clearShape() {
+            [baseMesh, bodyMesh, topMesh, edgeLines, ...extraMeshes].forEach(m => { if (m) scene.remove(m); });
+            baseMesh = bodyMesh = topMesh = edgeLines = null;
+            extraMeshes = [];
+        }
+
+        function buildShape(progress) {
+            clearShape();
+            const d = dims[currentShape];
+            const h = d.h * progress;
+            const shape = getBaseShape();
+
+            // Base face (always visible)
+            const baseGeo = new THREE.ShapeGeometry(shape);
+            baseMesh = new THREE.Mesh(baseGeo, matBase);
+            baseMesh.rotation.x = -Math.PI / 2;
+            baseMesh.position.y = 0.005;
+            scene.add(baseMesh);
+
+            if (h > 0.01) {
+                // Extruded body
+                const extGeo = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+                bodyMesh = new THREE.Mesh(extGeo, matBody);
+                bodyMesh.rotation.x = -Math.PI / 2;
+                scene.add(bodyMesh);
+
+                // Top face
+                const topGeo = new THREE.ShapeGeometry(shape);
+                topMesh = new THREE.Mesh(topGeo, matTop);
+                topMesh.rotation.x = -Math.PI / 2;
+                topMesh.position.y = h;
+                scene.add(topMesh);
+
+                // Edges
+                const edges = new THREE.EdgesGeometry(extGeo);
+                edgeLines = new THREE.LineSegments(edges, matEdge);
+                edgeLines.rotation.x = -Math.PI / 2;
+                scene.add(edgeLines);
+            }
+
+            addDimensionLabels(progress);
+        }
+
+        /* ================================================================
+           ANIMATION
+           ================================================================ */
+        function startBuild() {
+            if (isBuilding) return;
+            isBuilding = true;
+            buildProgress = 0;
+            document.getElementById('btn-build').textContent = '⏳ Đang dựng...';
+
+            const duration = 5000;
+            const start = performance.now();
+
+            function step(now) {
+                buildProgress = Math.min((now - start) / duration, 1);
+                const t = buildProgress < 0.5
+                    ? 4 * buildProgress * buildProgress * buildProgress
+                    : 1 - Math.pow(-2 * buildProgress + 2, 3) / 2;
+
+                buildShape(t);
+                updateFormula(t);
+                document.getElementById('progress-bar').style.width = (buildProgress * 100) + '%';
+
+                if (buildProgress < 1) {
+                    buildAnimId = requestAnimationFrame(step);
+                } else {
+                    isBuilding = false;
+                    document.getElementById('btn-build').textContent = '✅ Hoàn thành!';
+                    setTimeout(() => { document.getElementById('btn-build').textContent = '▶️ Dựng lại'; }, 2000);
+                }
+            }
+            buildAnimId = requestAnimationFrame(step);
+        }
+
+        function resetBuild() {
+            if (buildAnimId) cancelAnimationFrame(buildAnimId);
+            isBuilding = false;
+            buildProgress = 0;
+            clearLabels();
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('btn-build').textContent = '▶️ Bắt đầu dựng hình';
+            buildShape(0);
+            updateFormula(0);
+        }
+
+        /* ================================================================
+           FORMULA DISPLAY
+           ================================================================ */
+        function updateFormula(progress) {
+            const el = document.getElementById('formula-display');
+            const explain = document.getElementById('explain-text');
+            const d = dims[currentShape];
+            const baseArea = getBaseArea();
+            const vol = baseArea * d.h * progress;
+            const name = shapeNames[currentShape];
+
+            // Base area formula string
+            let areaStr = '';
+            switch (currentShape) {
+                case 'box':
+                    areaStr = `<span class="f-blue">${d.w}</span> × <span class="f-green">${d.d}</span> = <span class="f-yellow">${baseArea.toFixed(1)}</span>`;
+                    break;
+                case 'triangle':
+                    areaStr = `½ × <span class="f-blue">${d.a}</span> × <span class="f-green">${d.b}</span> = <span class="f-yellow">${baseArea.toFixed(1)}</span>`;
+                    break;
+                case 'circle':
+                    areaStr = `π × <span class="f-blue">${d.r}</span>² = <span class="f-yellow">${baseArea.toFixed(2)}</span>`;
+                    break;
+                case 'pentagon':
+                    areaStr = `½ × 5 × <span class="f-blue">${d.r}</span>² × sin(72°) = <span class="f-yellow">${baseArea.toFixed(2)}</span>`;
+                    break;
+                case 'hexagon':
+                    areaStr = `½ × 6 × <span class="f-blue">${d.r}</span>² × sin(60°) = <span class="f-yellow">${baseArea.toFixed(2)}</span>`;
+                    break;
+                case 'star':
+                    areaStr = `(công thức sao) = <span class="f-yellow">${baseArea.toFixed(2)}</span>`;
+                    break;
+                case 'ellipse':
+                    areaStr = `π × <span class="f-blue">${d.rx}</span> × <span class="f-green">${d.ry}</span> = <span class="f-yellow">${baseArea.toFixed(2)}</span>`;
+                    break;
+            }
+
+            el.innerHTML = `
+            <div class="formula-line">
+                <span class="f-blue">S<sub>đáy</sub></span> = ${areaStr}
+            </div>
+            <div class="formula-line">
+                <span class="highlight f-purple">V</span> =
+                <span class="f-yellow">S<sub>đáy</sub></span> × <span class="f-pink">h</span> =
+                <span class="f-yellow">${baseArea.toFixed(1)}</span> × <span class="f-pink">${(d.h * progress).toFixed(1)}</span> =
+                <span class="highlight f-orange">${vol.toFixed(1)}</span>
+            </div>
+        `;
+
+            // Explanation with face names
+            let baseDesc = '', faceInfo = '';
+            switch (currentShape) {
+                case 'box':
+                    baseDesc = `hình chữ nhật (${d.w} × ${d.d})`;
+                    faceInfo = `<br>📌 <strong>Tên các mặt:</strong><br>
+                        • Mặt đáy: <span class="f-yellow">ABCD</span><br>
+                        • Mặt trên: <span class="f-green">A'B'C'D'</span><br>
+                        • Mặt bên: <span class="f-blue">ABB'A'</span>, <span class="f-blue">BCC'B'</span>, <span class="f-blue">CDD'C'</span>, <span class="f-blue">DAA'D'</span>`;
+                    break;
+                case 'triangle':
+                    baseDesc = `tam giác (đáy ${d.a}, cao ${d.b})`;
+                    faceInfo = `<br>📌 <strong>Tên các mặt:</strong><br>
+                        • Mặt đáy: <span class="f-yellow">ABC</span><br>
+                        • Mặt trên: <span class="f-green">A'B'C'</span><br>
+                        • Mặt bên: <span class="f-blue">ABB'A'</span>, <span class="f-blue">BCC'B'</span>, <span class="f-blue">CAA'C'</span>`;
+                    break;
+                case 'circle':
+                    baseDesc = `hình tròn (r = ${d.r})`;
+                    faceInfo = `<br>📌 <strong>Các mặt:</strong> đáy tròn + mặt bên cong`;
+                    break;
+                case 'pentagon':
+                    baseDesc = `ngũ giác đều (r = ${d.r})`;
+                    faceInfo = `<br>📌 <strong>Tên các mặt:</strong><br>
+                        • Mặt đáy: <span class="f-yellow">ABCDE</span><br>
+                        • Mặt trên: <span class="f-green">A'B'C'D'E'</span><br>
+                        • 5 mặt bên: <span class="f-blue">ABB'A'</span>, ...`;
+                    break;
+                case 'hexagon':
+                    baseDesc = `lục giác đều (r = ${d.r})`;
+                    faceInfo = `<br>📌 <strong>Tên các mặt:</strong><br>
+                        • Mặt đáy: <span class="f-yellow">ABCDEF</span><br>
+                        • Mặt trên: <span class="f-green">A'B'C'D'E'F'</span><br>
+                        • 6 mặt bên: <span class="f-blue">ABB'A'</span>, ...`;
+                    break;
+                case 'star':
+                    baseDesc = `hình ngôi sao 5 cánh (R = ${d.r})`;
+                    faceInfo = `<br>📌 <strong>Các mặt:</strong> đáy sao + mặt trên + các mặt bên`;
+                    break;
+                case 'ellipse':
+                    baseDesc = `hình elip (a = ${d.rx}, b = ${d.ry})`;
+                    faceInfo = `<br>📌 <strong>Các mặt:</strong> đáy elip + mặt bên cong`;
+                    break;
+            }
+
+            explain.innerHTML = `
+            <strong>${name}</strong> được tạo bằng cách lấy <strong>mặt đáy ${baseDesc}</strong>
+            rồi <strong>"kéo lên"</strong> theo chiều cao <span class="f-pink">h = ${d.h}</span>.<br><br>
+            🔑 <strong>Quy tắc chung:</strong> Dù mặt đáy có hình dạng gì, ta luôn tính:
+            <span class="f-purple"><strong>V</strong></span> = <span class="f-yellow">S<sub>đáy</sub></span> × <span class="f-pink">h</span>
+            = <span class="f-yellow">${baseArea.toFixed(1)}</span> × <span class="f-pink">${d.h}</span>
+            = <strong class="f-orange">${(baseArea * d.h).toFixed(1)}</strong>
+            ${progress > 0.5 ? faceInfo : ''}
+        `;
+        }
+
+        /* ================================================================
+           SLIDERS
+           ================================================================ */
+        function buildSliders() {
+            const container = document.getElementById('sliders-container');
+            container.innerHTML = '';
+            const config = sliderConfig[currentShape];
+            const d = dims[currentShape];
+
+            config.forEach(s => {
+                const group = document.createElement('div');
+                group.className = 'slider-group';
+                group.innerHTML = `
+                <div class="slider-label">
+                    <span>${s.label}</span>
+                    <span class="val" id="val-${s.key}">${d[s.key]}</span>
+                </div>
+                <input type="range" id="slider-${s.key}"
+                    min="${s.min}" max="${s.max}" step="${s.step}" value="${d[s.key]}">
+            `;
+                container.appendChild(group);
+
+                group.querySelector('input').addEventListener('input', (e) => {
+                    d[s.key] = parseFloat(e.target.value);
+                    document.getElementById(`val-${s.key}`).textContent = d[s.key];
+                    buildShape(buildProgress > 0 ? buildProgress : 0);
+                    updateFormula(buildProgress > 0 ? buildProgress : 0);
+                });
+            });
+        }
+
+        /* ================================================================
+           TAB SWITCHING
+           ================================================================ */
+        document.querySelectorAll('.shape-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.shape-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentShape = tab.dataset.shape;
+                resetBuild();
+                buildSliders();
+                buildShape(0);
+                updateFormula(0);
+            });
+        });
+
+        /* ================================================================
+           INIT
+           ================================================================ */
+        initThree();
+        buildSliders();
+        buildShape(0);
+        updateFormula(0);
+    </script>
+</body>
+
+</html>
