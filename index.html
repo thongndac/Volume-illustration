@@ -333,17 +333,150 @@
             color: var(--text-primary);
         }
 
-        @media (max-width: 800px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
+        /* ── Camera Reset Button ── */
+        .btn-cam-reset {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            z-index: 10;
+            padding: 8px 14px;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            color: var(--text-secondary);
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
 
-            .canvas-card {
-                min-height: 380px;
+        .btn-cam-reset:hover {
+            background: rgba(96, 165, 250, 0.2);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
+        /* ── Mobile Responsive ── */
+        @media (max-width: 800px) {
+            .header {
+                padding: 16px 12px 8px;
             }
 
             .header h1 {
-                font-size: 1.5rem;
+                font-size: 1.35rem;
+            }
+
+            .header p {
+                font-size: 0.82rem;
+            }
+
+            .header .concept {
+                font-size: 0.88rem;
+                padding: 4px 12px;
+            }
+
+            .shape-tabs {
+                padding: 8px 10px;
+                gap: 6px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                justify-content: flex-start;
+            }
+
+            .shape-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .shape-tab {
+                padding: 6px 12px;
+                font-size: 0.78rem;
+                flex-shrink: 0;
+            }
+
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 0 10px 24px;
+                gap: 10px;
+            }
+
+            .canvas-card {
+                min-height: 320px;
+                border-radius: 12px;
+            }
+
+            .controls-panel {
+                gap: 8px;
+            }
+
+            .ctrl-card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .ctrl-card h3 {
+                font-size: 0.88rem;
+                margin-bottom: 8px;
+            }
+
+            .slider-label {
+                font-size: 0.8rem;
+            }
+
+            .slider-label .val {
+                font-size: 0.75rem;
+                padding: 1px 6px;
+            }
+
+            .btn-animate {
+                padding: 10px;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+
+            .formula-line {
+                font-size: 0.88rem;
+            }
+
+            .formula-line .highlight {
+                font-size: 1.05rem;
+            }
+
+            .explain-text {
+                font-size: 0.8rem;
+            }
+
+            .btn-cam-reset {
+                padding: 6px 10px;
+                font-size: 0.72rem;
+                bottom: 8px;
+                right: 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 1.15rem;
+            }
+
+            .header p {
+                font-size: 0.75rem;
+            }
+
+            .header .concept {
+                font-size: 0.78rem;
+            }
+
+            .canvas-card {
+                min-height: 280px;
+            }
+
+            .shape-tab {
+                padding: 5px 10px;
+                font-size: 0.72rem;
             }
         }
     </style>
@@ -371,7 +504,10 @@
     </div>
 
     <div class="main-container">
-        <div class="canvas-card"><canvas id="canvas3d"></canvas></div>
+        <div class="canvas-card">
+            <canvas id="canvas3d"></canvas>
+            <button class="btn-cam-reset" onclick="resetCamera()">📷 Góc nhìn mặc định</button>
+        </div>
         <div class="controls-panel">
             <div class="ctrl-card" id="ctrl-dimensions">
                 <h3>📏 Kích thước</h3>
@@ -492,6 +628,10 @@
             controls.maxDistance = 30;
             controls.target.set(0, 2, 0);
 
+            // Save default camera state
+            camera._defaultPos = camera.position.clone();
+            camera._defaultTarget = controls.target.clone();
+
             scene.add(new THREE.AmbientLight(0xffffff, 0.5));
             const dir = new THREE.DirectionalLight(0xffffff, 0.8);
             dir.position.set(8, 12, 6);
@@ -517,6 +657,29 @@
         /* ================================================================
            MATERIALS
            ================================================================ */
+        /* ================================================================
+           CAMERA RESET
+           ================================================================ */
+        function resetCamera() {
+            if (!camera._defaultPos) return;
+            // Animate smoothly
+            const startPos = camera.position.clone();
+            const startTarget = controls.target.clone();
+            const endPos = camera._defaultPos.clone();
+            const endTarget = camera._defaultTarget.clone();
+            const duration = 600;
+            const t0 = performance.now();
+            function animCam(now) {
+                const p = Math.min((now - t0) / duration, 1);
+                const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+                camera.position.lerpVectors(startPos, endPos, ease);
+                controls.target.lerpVectors(startTarget, endTarget, ease);
+                controls.update();
+                if (p < 1) requestAnimationFrame(animCam);
+            }
+            requestAnimationFrame(animCam);
+        }
+
         const matBase = new THREE.MeshPhysicalMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.6, roughness: 0.3, metalness: 0.1, side: THREE.DoubleSide });
         const matBody = new THREE.MeshPhysicalMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.35, roughness: 0.2, metalness: 0.05, side: THREE.DoubleSide });
         const matTop = new THREE.MeshPhysicalMaterial({ color: 0x34d399, transparent: true, opacity: 0.5, roughness: 0.3, metalness: 0.1, side: THREE.DoubleSide });
