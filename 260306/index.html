@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Toán Vui — Lớp 5</title>
+    <meta name="description"
+        content="Học Toán lớp 5 qua hình ảnh tương tác — Phân số, Số thập phân, Hình học 3D, Vận tốc và Luyện tập">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- ── Sidebar ── -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <h1>🎓 Toán Vui</h1>
+                <p>Chương trình Toán Lớp 5</p>
+            </div>
+            <div class="sidebar-nav">
+                <a class="nav-item" data-module="phan-so" href="#phan-so">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Phân Số</span>
+                </a>
+                <a class="nav-item" data-module="thap-phan" href="#thap-phan">
+                    <span class="nav-icon">🔢</span>
+                    <span class="nav-label">Số Thập Phân</span>
+                </a>
+                <a class="nav-item" data-module="hinh-hoc" href="#hinh-hoc">
+                    <span class="nav-icon">🧊</span>
+                    <span class="nav-label">Hình Học 3D</span>
+                </a>
+                <a class="nav-item" data-module="van-toc" href="#van-toc">
+                    <span class="nav-icon">🚀</span>
+                    <span class="nav-label">Vận Tốc</span>
+                </a>
+                <a class="nav-item" data-module="luyen-tap" href="#luyen-tap">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">Luyện Tập</span>
+                </a>
+            </div>
+            <div class="sidebar-footer">
+                Earning4Life · Toán Vui 2025
+            </div>
+        </nav>
+
+        <!-- ── Overlay (mobile) ── -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- ── Main ── -->
+        <main class="main-content">
+            <div id="app-content"></div>
+        </main>
+    </div>
+
+    <!-- ── Mobile Toggle ── -->
+    <button class="nav-toggle" id="nav-toggle">☰</button>
+
+    <!-- ── Three.js (for Hình Học module) ── -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+
+    <!-- ── App Core (must load first) ── -->
+    <script src="js/app.js"></script>
+
+    <!-- ── Modules (register into APP) ── -->
+    <script src="js/phan-so.js"></script>
+    <script src="js/thap-phan.js"></script>
+    <script src="js/hinh-hoc.js"></script>
+    <script src="js/van-toc.js"></script>
+    <script src="js/luyen-tap.js"></script>
+</body>
+
+</html>
